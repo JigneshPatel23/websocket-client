@@ -1,0 +1,92 @@
+<html>
+
+  <head>
+    <style>
+      .center-block{
+          display: inline-block;
+          position: relative;
+          text-align: center;
+          margin-bottom: 4px;
+          margin-top: 4px;
+          width: 100%;
+      }
+      .left-block{
+          display: inline-block;
+          position: relative;
+          text-align: left;
+          margin-bottom: 4px;
+          margin-top: 4px;
+          width: 100%;
+      }
+      .right-block{
+          display: inline-block;
+          position: relative;
+          text-align: right;
+          margin-bottom: 4px;
+          margin-top: 4px;
+          width: 100%;
+      }
+    </style>
+    <script type="text/javascript">
+
+    var ws;
+
+    function checkSupport(){
+      if("WebSocket" in window){
+        document.getElementById('logs').innerHTML += '<div id="type_system" class="center-block">Wow! WebSocket is supported in this browser.</div>';
+      }else{
+        document.getElementById('logs').innerHTML += '<div id="type_system" class="center-block">Opps! WebSocket is not supported in this browser.</div>';
+      }
+    }
+
+    function connect(url){
+        document.getElementById('logs').innerHTML += '<div id="type_system" class="center-block">WebSocket URL : '+url+'</div>';
+        ws = new WebSocket(url);
+        ws.onopen = function(){
+          document.getElementById('btn_connetction').value="Disconnect";
+          document.getElementById('logs').innerHTML += '<div id="type_system" class="center-block">WebSocket opened</div>';
+        };
+
+        ws.onmessage = function(evt){
+          var msg = evt.data;
+          document.getElementById('logs').innerHTML += '<div id="type_receive" class="left-block">'+msg+'</div>';
+        };
+
+        ws.onclose = function(){
+          document.getElementById('logs').innerHTML += '<div id="type_system" class="center-block">WebSocket closed</div>';
+          document.getElementById('btn_connetction').value="Connect";
+        }
+    }
+
+
+    function send(msg){
+      if(ws != null){
+        ws.send(msg);
+        document.getElementById('logs').innerHTML += '<div id="type_send" class="right-block">'+msg+'</div>';
+      }else{
+        ocument.getElementById('logs').innerHTML += '<div id="type_system" class="center-block">WebSocket - Message sent</div>';
+      }
+    }
+
+    </script>
+
+    <title>Socket Client</title>
+  </head>
+  <body>
+    <div id="connection">
+      WebSocket URL:
+      <input type="text" value="ws://web-url/websocket" width="1200" id="websocket_url"/>
+      <input type="button" value="Connect" id="btn_connetction" onclick="connect(document.getElementById('websocket_url').value)"/>
+    </div>
+
+    <div id="input">
+      Message:
+      <input type="text" value='{"key":"value"}' width="1200" id="input_msg"/>
+      <input type="button" value="Send" id="btn_send" onclick="send(document.getElementById('input_msg').value)"/>
+    </div>
+
+    <div id="logs">
+    </div>
+  </body>
+
+</html>
