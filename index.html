@@ -26,8 +26,44 @@
           margin-top: 4px;
           width: 100%;
       }
+      .connection{
+        width: 100%;
+        position: relative;
+        display: inline-block;
+        margin-bottom: 15px;
+      }
+      .connection .label{
+          display: block;
+          position: relative;
+          margin-bottom: 4px;
+          font-size: 15px;
+      }
+      .connection .input-control{
+        width: 95%;
+        display: inline-block;
+        position: relative;
+        height: 24px;
+        padding: 0 4px;
+      }
+      .connection .textarea-control{
+        width: 95%;
+        display: inline-block;
+        position: relative
+        padding: 0 4px;
+      }
+      .logs-block{
+        display: inline-block;
+        position: relative;
+        border: 1px solid #343434;
+        width: 93%;
+        padding: 15px;
+        overflow: auto;
+      }
     </style>
     <script type="text/javascript">
+    setTimeout(function (){
+      document.getElementById('logs').style.height = window.outerHeight - 200 - document.getElementById('heightcount').clientHeight ;
+    }, 100);
 
     var ws;
 
@@ -48,8 +84,11 @@
         };
 
         ws.onmessage = function(evt){
-          var msg = evt.data;
-          document.getElementById('logs').innerHTML += '<div id="type_receive" class="left-block">'+msg+'</div>';
+          var json = JSON.stringify(JSON.parse(evt.data));
+          document.getElementById('logs').innerHTML += '<code id="type_receive" class="left-block">'+json+'</code>';
+          if(evt.data == '{"msg":"ping"}'){
+              send('{"msg":"pong"}')
+          }
         };
 
         ws.onclose = function(){
@@ -62,7 +101,8 @@
     function send(msg){
       if(ws != null){
         ws.send(msg);
-        document.getElementById('logs').innerHTML += '<div id="type_send" class="right-block">'+msg+'</div>';
+        var json = JSON.stringify(JSON.parse(msg));
+        document.getElementById('logs').innerHTML += '<code id="type_send" class="right-block">'+json+'</code>';
       }else{
         ocument.getElementById('logs').innerHTML += '<div id="type_system" class="center-block">WebSocket - Message sent</div>';
       }
@@ -73,19 +113,23 @@
     <title>Socket Client</title>
   </head>
   <body>
-    <div id="connection">
-      WebSocket URL:
-      <input type="text" value="ws://web-url/websocket" width="1200" id="websocket_url"/>
-      <input type="button" value="Connect" id="btn_connetction" onclick="connect(document.getElementById('websocket_url').value)"/>
-    </div>
+    <div id="heightcount">
+      <div id="connection" class="connection">
+          <label class="label">WebSocket URL:</label>
+          <input type="text" value="ws://host/websocket" class="input-control" id="websocket_url"/>
+          <input type="button" value="Connect" id="btn_connetction" onclick="connect(document.getElementById('websocket_url').value)"/>
+      </div>
 
-    <div id="input">
-      Message:
-      <input type="text" value='{"key":"value"}' width="1200" id="input_msg"/>
-      <input type="button" value="Send" id="btn_send" onclick="send(document.getElementById('input_msg').value)"/>
+      <div id="input" class="connection">
+          <label class="label">Message:</label>
+          <textarea type="text" value='{"key":"value"}' width="1200" id="input_msg" class="textarea-control" rows="5"></textarea>
+          <input type="button" value="Send" id="btn_send" onclick="send(document.getElementById('input_msg').value)"/>
+      </div>
     </div>
-
-    <div id="logs">
+    <div class="connection">
+      <div id="logs" class="logs-block">
+      </div>
+      <input type="button" value="Clear" />
     </div>
   </body>
 
