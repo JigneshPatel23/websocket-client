@@ -107,6 +107,10 @@
         ocument.getElementById('logs').innerHTML += '<div id="type_system" class="center-block">WebSocket - Message sent</div>';
       }
     }
+	
+	function clearData(){
+       document.getElementById('logs').innerHTML = '<code id="type_send" class="right-block"></code>';
+    }
 
     </script>
 
@@ -129,7 +133,7 @@
     <div class="connection">
       <div id="logs" class="logs-block">
       </div>
-      <input type="button" value="Clear" />
+      <input type="button" value="Clear" onclick="clearData()" />
     </div>
   </body>
 
